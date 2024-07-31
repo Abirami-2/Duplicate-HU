@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HU Segment Duplicate Checker</title>
+</head>
+<body>
+    <h1>Upload XML File to Check for Duplicate HU Segments</h1>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload</button>
+    <div id="result"></div>
+
+    <script>
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const xmlData = event.target.result;
+                fetch('/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ xmlData })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = 
+                        'Duplicates: ' + data.duplicates.join(', ');
+                });
+            };
+
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
